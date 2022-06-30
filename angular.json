@@ -3,5 +3,36 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "ngx-fluent": {
+      "projectType": "library",
+      "root": "projects/ngx-fluent",
+      "sourceRoot": "projects/ngx-fluent/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-fluent/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-fluent/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-fluent/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-fluent/src/test.ts",
+            "tsConfig": "projects/ngx-fluent/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-fluent/karma.conf.js"
+          }
+        }
+      }
+    }
   }
 }
