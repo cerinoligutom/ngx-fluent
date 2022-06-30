@@ -1,20 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'lib-ngx-fluent',
   template: `
-    <p>
-      ngx-fluent works!
-    </p>
+    <p>ngx-fluent works!</p>
   `,
-  styles: [
-  ]
+  styles: [],
 })
-export class NgxFluentComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class NgxFluentComponent {
+  constructor() {}
 }
