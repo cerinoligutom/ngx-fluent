@@ -8,9 +8,8 @@ describe('NgxFluentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NgxFluentComponent ]
-    })
-    .compileComponents();
+      declarations: [NgxFluentComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NgxFluentComponent);
     component = fixture.componentInstance;
