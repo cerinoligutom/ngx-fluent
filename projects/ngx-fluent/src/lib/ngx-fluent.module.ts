@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
-import { NgxFluentComponent } from './ngx-fluent.component';
+import { NgxFluentPipe } from './ngx-fluent.pipe';
 
 @NgModule({
-  declarations: [NgxFluentComponent],
+  declarations: [NgxFluentPipe],
   imports: [],
-  exports: [NgxFluentComponent],
+  exports: [NgxFluentPipe],
 })
 export class NgxFluentModule {}
