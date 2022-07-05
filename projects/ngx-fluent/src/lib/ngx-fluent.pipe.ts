@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'ngxFluent',
+  name: 'fluent',
 })
 export class NgxFluentPipe implements PipeTransform {
   transform(value: unknown, ...args: unknown[]): unknown {
