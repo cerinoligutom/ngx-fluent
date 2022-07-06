@@ -1,5 +1,5 @@
 {
-  "name": "ngx-fluent",
+  "name": "@zeferinix/ngx-fluent",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^14.0.0",
