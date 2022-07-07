@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgxFluentModule } from 'ngx-fluent';
+import { NgxFluentModule } from '@zeferinix/ngx-fluent';
 
 import { AppComponent } from './app.component';
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgxFluentService } from 'ngx-fluent';
+import { NgxFluentService } from '@zeferinix/ngx-fluent';
 
 @Component({
   selector: 'app-root',
