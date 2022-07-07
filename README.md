@@ -89,3 +89,7 @@ export class MyComponent {
   }
 }
 ```
+
+## Contributing
+
+See [Contributing Guide](/CONTRIBUTING.md).
