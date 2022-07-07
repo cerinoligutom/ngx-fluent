@@ -1,6 +1,13 @@
 {
   "name": "@zeferinix/ngx-fluent",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "An Angular library for Fluent",
+  "author": {
+    "email": "zeferinix@gmail.com",
+    "name": "Cerino Ligutom III",
+    "url": "https://www.zeferinix.com"
+  },
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "^14.0.0",
     "@angular/core": "^14.0.0",
@@ -8,5 +15,21 @@
   },
   "dependencies": {
     "tslib": "^2.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cerino-ligutom/ngx-fluent.git"
+  },
+  "homepage": "https://github.com/cerino-ligutom/ngx-fluent#readme",
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "l10n",
+    "localization",
+    "ftl",
+    "locale",
+    "language",
+    "translate",
+    "translation"
+  ]
 }

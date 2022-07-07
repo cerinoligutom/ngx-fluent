@@ -1,6 +1,12 @@
 {
   "name": "@zeferinix/ngx-fluent",
-  "version": "0.1.0",
+  "description": "An Angular library for Fluent",
+  "author": {
+    "email": "zeferinix@gmail.com",
+    "name": "Cerino Ligutom III",
+    "url": "https://www.zeferinix.com"
+  },
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +15,6 @@
     "test": "ng test",
     "lint": "ng lint"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^14.0.0",
     "@angular/common": "^14.0.0",
@@ -49,5 +54,16 @@
     "prettier": "^2.7.1",
     "prettier-eslint": "^15.0.1",
     "typescript": "~4.7.2"
-  }
+  },
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "l10n",
+    "localization",
+    "ftl",
+    "locale",
+    "language",
+    "translate",
+    "translation"
+  ]
 }
