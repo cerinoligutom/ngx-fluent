@@ -23,10 +23,7 @@ jobs:
       - name: Build library
         run: npm run build -- ngx-fluent
 
-      - name: Switch directory to dist lib
-        run: cd dist/ngx-fluent
-
       - name: Publish to NPM
-        run: npm publish --access public
+        run: cd ./dist/ngx-fluent && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
