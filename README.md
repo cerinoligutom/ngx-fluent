@@ -27,7 +27,7 @@ import { NgxFluentModule } from '@zeferinix/ngx-fluent';
 
 ### Register locale source mapping and initial locale
 
-The library needs to know where to locate the `.ftl` files so you have to provide this first (preferably on the root of your app such as `app.component.ts`).
+The library needs to know where to locate the `.ftl` files so you have to provide this first (preferably on the root of your app such as `app.component.ts`) by providing a flat object where the `key` is the `locale` code and the `value` is the `source` then passing this object to the `setTranslationSourceMap()` method of the service.
 
 ```ts
 import { Component, OnInit } from '@angular/core';
