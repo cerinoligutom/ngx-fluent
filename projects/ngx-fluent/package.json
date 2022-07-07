@@ -9,8 +9,8 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "^14.0.0",
-    "@angular/core": "^14.0.0",
+    "@angular/common": "*",
+    "@angular/core": "*",
     "@fluent/bundle": "< 1.0.0"
   },
   "dependencies": {
