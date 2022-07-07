@@ -12,7 +12,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test --browsers=Chrome",
     "test:headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
     "lint": "ng lint"
   },
