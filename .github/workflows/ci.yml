@@ -30,7 +30,7 @@ jobs:
         run: npm run lint
 
       - name: Run tests
-        run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+        run: npm run test:headless
 
       - name: Try build
         run: npm run build -- ngx-fluent
