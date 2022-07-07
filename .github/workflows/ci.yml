@@ -33,4 +33,4 @@ jobs:
         run: npm run lint
 
       - name: Run tests
-        run: npm run test:headless
+        run: npm run test:headless -- ngx-fluent
