@@ -1,27 +1,91 @@
-# NgxFluent
+# ngx-fluent
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.3.
+An [Angular](https://angular.io/) library for [Fluent](https://projectfluent.org/).
 
-## Development server
+## Installation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+```bash
+npm install --save @fluent/bundle @zeferinix/ngx-fluent 
+```
 
-## Code scaffolding
+## Usage
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Initialize module
 
-## Build
+Import the library into your app module:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```ts
+import { NgxFluentModule } from '@zeferinix/ngx-fluent';
 
-## Running unit tests
+@NgModule({
+  imports: [
+    // ... your other module imports
+    NgxFluentModule,
+  ],
+})
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Register locale source mapping and initial locale
 
-## Running end-to-end tests
+The library needs to know where to locate the `.ftl` files so you have to provide this first (preferably on the root of your app such as `app.component.ts`).
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```ts
+import { Component, OnInit } from '@angular/core';
+import { NgxFluentService } from '@zeferinix/ngx-fluent';
 
-## Further help
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+})
+export class AppComponent implements OnInit {
+  constructor(private fluentService: NgxFluentService) {}
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+  ngOnInit() {
+    this.fluentService.setTranslationSourceMap({
+      en: 'assets/i18n/en.ftl', // could be on your assets folder
+      sv: 'https://my.domain.com/translations/sv.ftl', // or external provided you don't get CORS issues
+    });
+
+    this.fluentService.setLocale('en');  // set initial locale
+  }
+}
+```
+
+### Switching locale
+
+Switching to another language is as simple as calling the `setLocale()` method and passing the new locale.
+
+```ts
+export class MyComponent {
+  switchLocale(locale: string) {
+    this.fluentService.setLocale(locale);
+  }
+}
+```
+
+### Pipe
+
+Use the `fluent` pipe.
+
+```angular
+{{ 'welcome-user' | fluent: { user: 'John Done' } }}
+```
+
+*Note: The pipe will return the key if it fails to resolve.*
+
+### Programmatically via service
+
+You can call the `translate()` method on the service to translate a message by passing the message key and optional arguments for interpolation.
+
+*Note: The service will return `null` if it fails to resolve.*
+
+```ts
+export class MyComponent {
+  async translate(key: string, args?: Record<string, any>) {
+    const translation = await this.fluentService.translate(key, args);
+    console.log(translation);
+    return translation;
+  }
+}
+```
