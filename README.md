@@ -2,6 +2,14 @@
 
 An [Angular](https://angular.io/) library for [Fluent](https://projectfluent.org/).
 
+## Angular compatibility
+
+Latest version available for each version of Angular
+
+| Angular | @zeferinix/ngx-fluent |
+|---------|-----------------------|
+| 13.x    | 1.x                   |
+
 ## Installation
 
 ```bash
