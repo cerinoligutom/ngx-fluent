@@ -19,7 +19,6 @@ export class NgxFluentPipe implements PipeTransform {
 
       this.localeChanges.subscribe(async () => {
         this.value = await this.fluentService.translate(key, args);
-        console.log('locale changed! new value:', this.value);
       });
     }
 
