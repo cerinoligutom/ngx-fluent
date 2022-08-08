@@ -6,9 +6,10 @@ An [Angular](https://angular.io/) library for [Fluent](https://projectfluent.org
 
 Latest version available for each version of Angular
 
-| Angular | @zeferinix/ngx-fluent |
-|---------|-----------------------|
-| 13.x    | 1.x                   |
+| Angular | @zeferinix/ngx-fluent | @fluent/bundle |
+|---------|-----------------------|----------------|
+| 13.x    | >= 1.0                | < 1.x          |
+| 14.x    | >= 1.1                | < 1.x          |
 
 ## Installation
 
