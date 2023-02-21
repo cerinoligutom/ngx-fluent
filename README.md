@@ -6,10 +6,11 @@ An [Angular](https://angular.io/) library for [Fluent](https://projectfluent.org
 
 Latest version available for each version of Angular
 
-| Angular | @zeferinix/ngx-fluent | @fluent/bundle |
-|---------|-----------------------|----------------|
-| 13.x    | >= 1.0                | < 1.x          |
-| 14.x    | >= 1.1                | < 1.x          |
+ | @zeferinix/ngx-fluent | Angular | @fluent/bundle |
+ | --------------------- | ------- | -------------- |
+ | >= 1.0                | 13.x    | < 1.x          |
+ | >= 1.1                | 14.x    | < 1.x          |
+ | >= 1.2                | 15.x    | < 1.x          |
 
 ## Installation
 
@@ -37,6 +38,8 @@ import { NgxFluentModule } from '@zeferinix/ngx-fluent';
 ### Register locale source mapping and initial locale
 
 The library needs to know where to locate the `.ftl` files so you have to provide this first (preferably on the root of your app such as `app.component.ts`) by providing a flat object where the `key` is the `locale` code and the `value` is the `source` then passing this object to the `setTranslationSourceMap()` method of the service.
+
+*Note: Translation sources are lazy loaded then cached in memory. Translation source for the respective locale is only loaded after calling the `setLocale()` method.*
 
 ```ts
 import { Component, OnInit } from '@angular/core';
