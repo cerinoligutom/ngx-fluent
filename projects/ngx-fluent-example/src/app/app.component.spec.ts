@@ -46,14 +46,16 @@ describe('AppComponent', () => {
 
   it('should react to fluent argument changes', () => {
     const compDe = fixture.debugElement;
+    const translatedMessageElem: HTMLHeadingElement = compDe.query(By.css('.qa-translated-message')).nativeElement;
+
     component.name = 'John Doe';
     fixture.detectChanges();
+
+    expect(translatedMessageElem.textContent).toEqual('Hello John Doe');
 
     component.name = 'Everyman';
     fixture.detectChanges();
 
-    const translatedMessageElem: HTMLHeadingElement = compDe.query(By.css('.qa-translated-message')).nativeElement;
-
-    expect(translatedMessageElem.textContent).toEqual('Hello Everyman!');
+    expect(translatedMessageElem.textContent).toEqual('Hello Everyman');
   });
 });
