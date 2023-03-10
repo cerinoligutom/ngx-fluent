@@ -25,7 +25,7 @@ export class NgxFluentPipe implements PipeTransform {
       });
     }
 
-    // Could probably be optimized to only update when the args change?
+    // FIXME: Could probably be optimized to only update when the args change?
     if (!isEqual(args, this.previousArgs)) {
       this.previousArgs = args;
       this.fluentService.translate(key, args).then((value) => {
