@@ -11,7 +11,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build ngx-fluent --watch --configuration development",
     "test": "ng test --browsers=Chrome",
     "test:headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
     "lint": "ng lint"
