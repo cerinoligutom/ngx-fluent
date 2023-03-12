@@ -5,3 +5,4 @@
 export * from './lib/ngx-fluent.service';
 export * from './lib/ngx-fluent.pipe';
 export * from './lib/ngx-fluent.module';
+export * from './lib/translation-source.interface';

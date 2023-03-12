@@ -3,13 +3,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, catchError, of, lastValueFrom } from 'rxjs';
 import { FluentBundle, FluentResource } from '@fluent/bundle';
 
+import { TranslationSource } from './translation-source.interface';
+
 @Injectable({
   providedIn: 'root',
 })
 export class NgxFluentService {
   private locale = new BehaviorSubject<string | null>(null);
 
-  private translationSourceMap: Record<string, string> = {};
+  private translationSourceMap: Record<string, string | TranslationSource> = {};
   private translationsMap = new Map<string, FluentBundle | null>();
 
   localeChanges = this.locale.asObservable();
@@ -24,10 +26,14 @@ export class NgxFluentService {
     }
 
     // If we don't have the translation, fetch it.
-    const translationSourceUrl = this.translationSourceMap[locale] ?? '';
-    return this.http.get(translationSourceUrl, { responseType: 'text' }).pipe(
+    const source = this.translationSourceMap[locale] ?? '';
+    const path = typeof source === 'string' ? source : source.path;
+
+    return this.http.get(path, { responseType: 'text' }).pipe(
       map((content) => {
-        const bundle = new FluentBundle(locale);
+        let config;
+        if (typeof source !== 'string') config = source.bundleConfig;
+        const bundle = new FluentBundle(locale, config);
         const resource = new FluentResource(content);
         const errors = bundle.addResource(resource);
 
@@ -57,7 +63,7 @@ export class NgxFluentService {
       });
   }
 
-  setTranslationSourceMap(translationSourceMap: Record<string, string>) {
+  setTranslationSourceMap(translationSourceMap: Record<string, string | TranslationSource>) {
     this.translationSourceMap = translationSourceMap;
   }
 
