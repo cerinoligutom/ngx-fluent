@@ -32,5 +32,8 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run tests
+      - name: Run ngx-fluent tests
         run: npm run test:headless -- ngx-fluent
+
+      - name: Run ngx-fluent-example tests
+        run: npm run test:headless -- ngx-fluent-example

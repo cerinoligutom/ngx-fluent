@@ -18,12 +18,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.fluentService.setTranslationSourceMap({
       en: 'assets/i18n/en.ftl',
-      sv: {
-        path: 'assets/i18n/sv.ftl',
-        bundleConfig: {
-          transform: (val) => val.toUpperCase(),
-        }
-      },
+      sv: { path: 'assets/i18n/sv.ftl' },
     });
 
     this.fluentService.setLocale('en');

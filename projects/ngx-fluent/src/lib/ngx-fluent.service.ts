@@ -83,6 +83,11 @@ export class NgxFluentService {
       return null;
     }
 
-    return bundle.formatPattern(message.value, args);
+    const errors: Error[] = [];
+    const formatted = bundle.formatPattern(message.value, args, errors);
+
+    for (const error of errors) console.warn(`Error when formatting message with key [${key}]:`, error);
+
+    return formatted;
   }
 }
