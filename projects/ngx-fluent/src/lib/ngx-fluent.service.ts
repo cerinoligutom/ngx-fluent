@@ -1,7 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, catchError, of, lastValueFrom } from 'rxjs';
-import { FluentBundle, FluentResource } from '@fluent/bundle';
+import { FluentBundle, FluentFunction, FluentResource, TextTransform } from '@fluent/bundle';
+
+type FluentBundleOptions = {
+  functions?: Record<string, FluentFunction>;
+  useIsolating?: boolean;
+  transform?: TextTransform;
+};
+type TranslationSourceMapParams = Record<
+  string,
+  | string
+  | {
+      path: string;
+      bundleConfig?: FluentBundleOptions;
+    }
+>;
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +23,7 @@ import { FluentBundle, FluentResource } from '@fluent/bundle';
 export class NgxFluentService {
   private locale = new BehaviorSubject<string | null>(null);
 
-  private translationSourceMap: Record<string, string> = {};
+  private translationSourceMap: TranslationSourceMapParams = {};
   private translationsMap = new Map<string, FluentBundle | null>();
 
   localeChanges = this.locale.asObservable();
@@ -23,11 +37,30 @@ export class NgxFluentService {
       return of(translationBundle);
     }
 
-    // If we don't have the translation, fetch it.
-    const translationSourceUrl = this.translationSourceMap[locale] ?? '';
+    const localizedTranslationSourceMap = this.translationSourceMap[locale];
+
+    let translationSourceUrl: string;
+    let fluentBundleOptions: FluentBundleOptions;
+
+    switch (typeof localizedTranslationSourceMap) {
+      case 'string':
+        translationSourceUrl = localizedTranslationSourceMap ?? '';
+        break;
+
+      case 'object':
+        translationSourceUrl = localizedTranslationSourceMap.path ?? '';
+        fluentBundleOptions = localizedTranslationSourceMap.bundleConfig ?? {};
+        break;
+
+      default:
+        // If we don't have the translation, fetch it.
+        translationSourceUrl = '';
+        break;
+    }
+
     return this.http.get(translationSourceUrl, { responseType: 'text' }).pipe(
       map((content) => {
-        const bundle = new FluentBundle(locale);
+        const bundle = new FluentBundle(locale, fluentBundleOptions);
         const resource = new FluentResource(content);
         const errors = bundle.addResource(resource);
 
@@ -57,7 +90,7 @@ export class NgxFluentService {
       });
   }
 
-  setTranslationSourceMap(translationSourceMap: Record<string, string>) {
+  setTranslationSourceMap(translationSourceMap: TranslationSourceMapParams) {
     this.translationSourceMap = translationSourceMap;
   }
 
