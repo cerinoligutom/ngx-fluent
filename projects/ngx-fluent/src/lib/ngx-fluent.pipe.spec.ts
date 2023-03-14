@@ -16,6 +16,13 @@ describe('NgxFluentPipe', () => {
     sv: `${key} = Hallå { $name }`,
   };
 
+  function applyIsolation(text: string) {
+    // Unicode isolation characters are used to prevent BiDi issues.
+    // It's enabled by default upstream (@fluent/bundle).
+    // https://github.com/projectfluent/fluent.js/wiki/Unicode-Isolation
+    return `⁨${text}⁩`;
+  }
+
   beforeEach(() => {
     const _httpSpy = jasmine.createSpyObj('HttpClient', ['get', 'pipe']);
     TestBed.configureTestingModule({
@@ -39,7 +46,7 @@ describe('NgxFluentPipe', () => {
     httpSpy = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
   });
 
-  it(`transforms "${key}" key`, fakeAsync(() => {
+  it(`transforms "${key}" key from one language`, fakeAsync(() => {
     httpSpy.get.and.returnValue(of(translations.en));
     fluentService.setLocale('en');
 
@@ -49,9 +56,45 @@ describe('NgxFluentPipe', () => {
     tick(100);
     translatedMessage = pipe.transform(key, { name });
 
-    // Unicode isolation characters are used to prevent BiDi issues.
-    // It's enabled by default upstream (@fluent/bundle).
-    // https://github.com/projectfluent/fluent.js/wiki/Unicode-Isolation
-    expect(translatedMessage).toBe(`Hello ⁨${name}⁩`);
+    expect(translatedMessage).toBe(`Hello ${applyIsolation(name)}`);
+  }));
+
+  it(`transforms "${key}" key from one language to another`, fakeAsync(() => {
+    httpSpy.get.and.returnValue(of(translations.en));
+    fluentService.setLocale('en');
+
+    let name = 'John Doe';
+
+    let translatedMessage = pipe.transform(key, { name });
+    tick(100);
+    translatedMessage = pipe.transform(key, { name });
+    expect(translatedMessage).toBe(`Hello ${applyIsolation(name)}`);
+
+    httpSpy.get.and.returnValue(of(translations.sv));
+    fluentService.setLocale('sv');
+
+    translatedMessage = pipe.transform(key, { name });
+    tick(100);
+    translatedMessage = pipe.transform(key, { name });
+    expect(translatedMessage).toBe(`Hallå ${applyIsolation(name)}`);
+  }));
+
+  it(`args should be reactive`, fakeAsync(() => {
+    httpSpy.get.and.returnValue(of(translations.en));
+    fluentService.setLocale('en');
+
+    let name = 'John Doe';
+
+    let translatedMessage = pipe.transform(key, { name });
+    tick(100);
+    translatedMessage = pipe.transform(key, { name });
+    expect(translatedMessage).toBe(`Hello ${applyIsolation(name)}`);
+
+    name = 'Billy';
+
+    translatedMessage = pipe.transform(key, { name });
+    tick(100);
+    translatedMessage = pipe.transform(key, { name });
+    expect(translatedMessage).toBe(`Hello ${applyIsolation(name)}`);
   }));
 });
