@@ -1,7 +1,7 @@
-<button (click)="cycleLocale()">Cycle Locale</button>
+<button class="qa-locale-cycle-btn" (click)="cycleLocale()">Cycle Locale</button>
 
-<h1>Current Locale: {{ currentLocale }}</h1>
+<h1 class="qa-current-locale">Current Locale: {{ currentLocale }}</h1>
 
-<h2>{{ 'hello' | fluent : { name } }}</h2>
+<input class="qa-name-input" type="text" placeholder="Name" [(ngModel)]="name" />
 
-<h2>{{ 'hello' | fluent : { name } }}</h2>
+<h2 class="qa-translated-message">{{ 'hello' | fluent : { name } }}</h2>

@@ -1,1 +1,1 @@
-hello = {$name} Hello
+hello = Hello {$name}
