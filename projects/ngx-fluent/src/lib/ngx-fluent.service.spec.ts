@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { FluentBundle, FluentResource } from '@fluent/bundle';
 import { of } from 'rxjs';
 
 import { NgxFluentService } from './ngx-fluent.service';
@@ -7,6 +8,11 @@ import { NgxFluentService } from './ngx-fluent.service';
 describe('NgxFluentService', () => {
   let fluentService: NgxFluentService;
   let httpSpy: jasmine.SpyObj<HttpClient>;
+
+  const commonLocale = 'en';
+  const commonKey = 'test-key';
+  const commonValue = 'test-translation';
+  const commonTranslation = `${commonKey} = ${commonValue}`;
 
   beforeEach(() => {
     const _httpSpy = jasmine.createSpyObj('HttpClient', ['get', 'pipe']);
@@ -19,56 +25,110 @@ describe('NgxFluentService', () => {
     httpSpy.get.and.returnValue(of(''));
 
     fluentService = TestBed.inject(NgxFluentService);
-    fluentService.setTranslationSourceMap({
-      en: 'assets/locales/en.ftl',
+  });
+
+  function runCommonTests() {
+    it('localeChanges should emit new locale', () => {
+      fluentService.setLocale('test-locale');
+
+      fluentService.localeChanges.subscribe((locale) => {
+        expect(locale).toBe('test-locale');
+      });
     });
-  });
 
-  it('localeChanges should emit new locale', () => {
-    fluentService.setLocale('test-locale');
-
-    fluentService.localeChanges.subscribe((locale) => {
-      expect(locale).toBe('test-locale');
+    it('currentLocale should return null initially', () => {
+      expect(fluentService.currentLocale).toBeNull();
     });
+
+    it('currentLocale should return new locale after setting setLocale', () => {
+      fluentService.setLocale(commonLocale);
+      expect(fluentService.currentLocale).toBe(commonLocale);
+    });
+
+    it('unresolved locale returns null', async () => {
+      fluentService.setLocale('non-existent');
+
+      const result = await fluentService.translate(commonKey);
+      expect(result).toBeNull();
+    });
+
+    it('resolved locale and message returns translation', async () => {
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
+
+      const result = await fluentService.translate(commonKey);
+      expect(result).toBe(commonValue);
+    });
+
+    it('resolved locale and unresolved message returns null', async () => {
+      const unknownKey = 'unknown-key';
+
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
+
+      const result = await fluentService.translate(unknownKey);
+      expect(result).toBeNull();
+    });
+
+    it('should remove locale key from source map after loading a locale', () => {
+      expect(Object.keys(fluentService['translationSourceMap'])).toEqual([commonLocale]);
+
+      fluentService.setLocale(commonLocale);
+
+      expect(Object.keys(fluentService['translationSourceMap'])).toEqual([]);
+    });
+
+    it('should reload the existing locale translations if setSourceTranslationMap receives a previously loaded locale', async () => {
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
+
+      expect(await fluentService.translate(commonKey)).toBe(commonValue);
+
+      const newValue = 'new-translation';
+
+      const bundle = new FluentBundle(commonLocale);
+      const resource = new FluentResource(`${commonKey} = ${newValue}`);
+      bundle.addResource(resource);
+
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: bundle,
+      });
+
+      expect(await fluentService.translate(commonKey)).toBe(newValue);
+    });
+  }
+
+  describe('SetTranslationSourceMap option uses Record<string, string>', () => {
+    beforeEach(() => {
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: `assets/locales/${commonLocale}.ftl`,
+      });
+    });
+
+    runCommonTests();
   });
 
-  it('currentLocale should return null initially', () => {
-    expect(fluentService.currentLocale).toBeNull();
+  describe('SetTranslationSourceMap option uses Record<string, FluentBundleOptions>', () => {
+    beforeEach(() => {
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: { path: `assets/locales/${commonLocale}.ftl`, bundleConfig: undefined },
+      });
+    });
+
+    runCommonTests();
   });
 
-  it('currentLocale should return new locale after setting setLocale', () => {
-    fluentService.setLocale('en');
-    expect(fluentService.currentLocale).toBe('en');
-  });
+  describe('SetTranslationSourceMap option uses FluentBundle instance', () => {
+    beforeEach(() => {
+      const bundle = new FluentBundle(commonLocale);
+      const resource = new FluentResource(commonTranslation);
+      bundle.addResource(resource);
 
-  it('unresolved locale returns null', async () => {
-    const key = 'test-key';
-    fluentService.setLocale('non-existent');
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: bundle,
+      });
+    });
 
-    const result = await fluentService.translate(key);
-    expect(result).toBeNull();
-  });
-
-  it('resolved locale and message returns translation', async () => {
-    const key = 'test-key';
-    const value = 'test-translation';
-    const translation = `${key} = ${value}`;
-
-    httpSpy.get.and.returnValue(of(translation));
-    fluentService.setLocale('en');
-
-    const result = await fluentService.translate(key);
-    expect(result).toBe(value);
-  });
-
-  it('resolved locale and unresolved message returns null', async () => {
-    const key = 'unknown-key';
-    const translation = 'test-key = test-translation';
-
-    httpSpy.get.and.returnValue(of(translation));
-    fluentService.setLocale('en');
-
-    const result = await fluentService.translate(key);
-    expect(result).toBeNull();
+    runCommonTests();
   });
 });
