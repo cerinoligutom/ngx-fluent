@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { FluentBundle, FluentResource } from '@fluent/bundle';
 import { of } from 'rxjs';
 
 import { NgxFluentService } from './ngx-fluent.service';
@@ -7,6 +8,11 @@ import { NgxFluentService } from './ngx-fluent.service';
 describe('NgxFluentService', () => {
   let fluentService: NgxFluentService;
   let httpSpy: jasmine.SpyObj<HttpClient>;
+
+  const commonLocale = 'en';
+  const commonKey = 'test-key';
+  const commonValue = 'test-translation';
+  const commonTranslation = `${commonKey} = ${commonValue}`;
 
   beforeEach(() => {
     const _httpSpy = jasmine.createSpyObj('HttpClient', ['get', 'pipe']);
@@ -35,38 +41,32 @@ describe('NgxFluentService', () => {
     });
 
     it('currentLocale should return new locale after setting setLocale', () => {
-      fluentService.setLocale('en');
-      expect(fluentService.currentLocale).toBe('en');
+      fluentService.setLocale(commonLocale);
+      expect(fluentService.currentLocale).toBe(commonLocale);
     });
 
     it('unresolved locale returns null', async () => {
-      const key = 'test-key';
       fluentService.setLocale('non-existent');
 
-      const result = await fluentService.translate(key);
+      const result = await fluentService.translate(commonKey);
       expect(result).toBeNull();
     });
 
     it('resolved locale and message returns translation', async () => {
-      const key = 'test-key';
-      const value = 'test-translation';
-      const translation = `${key} = ${value}`;
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
 
-      httpSpy.get.and.returnValue(of(translation));
-      fluentService.setLocale('en');
-
-      const result = await fluentService.translate(key);
-      expect(result).toBe(value);
+      const result = await fluentService.translate(commonKey);
+      expect(result).toBe(commonValue);
     });
 
     it('resolved locale and unresolved message returns null', async () => {
-      const key = 'unknown-key';
-      const translation = 'test-key = test-translation';
+      const unknownKey = 'unknown-key';
 
-      httpSpy.get.and.returnValue(of(translation));
-      fluentService.setLocale('en');
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
 
-      const result = await fluentService.translate(key);
+      const result = await fluentService.translate(unknownKey);
       expect(result).toBeNull();
     });
   }
@@ -74,7 +74,7 @@ describe('NgxFluentService', () => {
   describe('SetTranslationSourceMap option uses Record<string, string>', () => {
     beforeEach(() => {
       fluentService.setTranslationSourceMap({
-        en: 'assets/locales/en.ftl',
+        [commonLocale]: `assets/locales/${commonLocale}.ftl`,
       });
     });
 
@@ -84,7 +84,21 @@ describe('NgxFluentService', () => {
   describe('SetTranslationSourceMap option uses Record<string, FluentBundleOptions>', () => {
     beforeEach(() => {
       fluentService.setTranslationSourceMap({
-        en: { path: 'assets/locales/en.ftl', bundleConfig: undefined },
+        [commonLocale]: { path: `assets/locales/${commonLocale}.ftl`, bundleConfig: undefined },
+      });
+    });
+
+    runCommonTests();
+  });
+
+  describe('SetTranslationSourceMap option uses FluentBundle instance', () => {
+    beforeEach(() => {
+      const bundle = new FluentBundle(commonLocale);
+      const resource = new FluentResource(commonTranslation);
+      bundle.addResource(resource);
+
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: bundle,
       });
     });
 
