@@ -41,6 +41,8 @@ The library needs to know where to locate the `.ftl` files so you have to provid
 
 *Note: Translation sources are lazy loaded then cached in memory. Translation source for the respective locale is only loaded after calling the `setLocale()` method.*
 
+*Tip: Make your locale keys compliant to the [BCP 47 standard](https://en.wikipedia.org/wiki/IETF_language_tag) as much as possible so that you don't encounter potential issues when using Fluent's built-in functions since they make use of the `Intl` API which also relies on the same standard. For example, see [`Intl.NumberFormat()'s locales`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) parameter.*
+
 ```ts
 import { Component, OnInit } from '@angular/core';
 import { NgxFluentService } from '@zeferinix/ngx-fluent';
@@ -60,6 +62,72 @@ export class AppComponent implements OnInit {
     });
 
     this.fluentService.setLocale('en');  // set initial locale
+  }
+}
+```
+
+If you want to pass a config to the `FluentBundle` constructor, you can do so by passing an object instead.
+
+```ts
+export class AppComponent implements OnInit {
+  constructor(private fluentService: NgxFluentService) {}
+
+  ngOnInit() {
+    this.fluentService.setTranslationSourceMap({
+      en: { 
+        path: 'assets/i18n/en.ftl', // URL or path to the translation source
+        bundleConfig: { // Pass FluentBundle config here
+          useIsolating: false,
+        }, 
+      },
+    });
+
+    this.fluentService.setLocale('en');  // set initial locale
+  }
+}
+```
+
+If you want more granular control over the `FluentBundle` instances, you can pass it directly.
+
+```ts
+export class AppComponent implements OnInit {
+  constructor(private fluentService: NgxFluentService) {}
+
+  ngOnInit() {
+    // Initialize your bundle somewhere
+    const bundle = new FluentBundle('en', {
+      useIsolating: false,
+    });
+    const resource = new FluentResource('welcome-user = Welcome, {$user}!');
+    bundle.addResource(resource);
+
+    this.fluentService.setTranslationSourceMap({
+      en: bundle, // add it to the map, make sure the key is the same as the locale
+    });
+
+    this.fluentService.setLocale('en');  // set initial locale
+  }
+}
+```
+
+You can add multiple sources later as well if needed.
+
+```ts
+export class AppComponent implements OnInit {
+  constructor(private fluentService: NgxFluentService) {}
+
+  ngOnInit() {
+    this.fluentService.setTranslationSourceMap({
+      en: 'assets/i18n/en.ftl',
+    });
+
+    this.fluentService.setLocale('en');  // set initial locale
+
+    // ... After some time ...
+    
+    this.fluentService.setTranslationSourceMap({
+      sv: 'assets/i18n/sv.ftl',
+    });
   }
 }
 ```
