@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, catchError, of, lastValueFrom } from 'rxjs';
 import { FluentBundle, FluentResource } from '@fluent/bundle';
 
-import { TranslationSource } from './translation-source.interface';
+import type { TranslationSourceConfig, TranslationSourceMap } from './types';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ import { TranslationSource } from './translation-source.interface';
 export class NgxFluentService {
   private locale = new BehaviorSubject<string | null>(null);
 
-  private translationSourceMap: Record<string, string | TranslationSource> = {};
+  private translationSourceMap: TranslationSourceMap = {};
   private translationsMap = new Map<string, FluentBundle | null>();
 
   localeChanges = this.locale.asObservable();
@@ -25,14 +25,25 @@ export class NgxFluentService {
       return of(translationBundle);
     }
 
-    // If we don't have the translation, fetch it.
+    // If we don't have the translation, try to fetch it.
     const source = this.translationSourceMap[locale] ?? '';
-    const path = typeof source === 'string' ? source : source.path;
+
+    if (source instanceof FluentBundle) {
+      this.translationsMap.set(locale, source);
+      return of(source);
+    }
+
+    let path: string;
+    let config: TranslationSourceConfig['bundleConfig'];
+    if (source && typeof source !== 'string') {
+      path = source.path;
+      config = source.bundleConfig;
+    } else {
+      path = source;
+    }
 
     return this.http.get(path, { responseType: 'text' }).pipe(
       map((content) => {
-        let config;
-        if (typeof source !== 'string') config = source.bundleConfig;
         const bundle = new FluentBundle(locale, config);
         const resource = new FluentResource(content);
         const errors = bundle.addResource(resource);
@@ -63,8 +74,11 @@ export class NgxFluentService {
       });
   }
 
-  setTranslationSourceMap(translationSourceMap: Record<string, string | TranslationSource>) {
-    this.translationSourceMap = translationSourceMap;
+  setTranslationSourceMap(translationSourceMap: TranslationSourceMap) {
+    this.translationSourceMap = {
+      ...this.translationSourceMap,
+      ...translationSourceMap,
+    };
   }
 
   async translate(key: string, args?: any): Promise<string | null> {
