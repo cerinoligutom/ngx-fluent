@@ -91,10 +91,10 @@ export class NgxFluentService {
   }
 
   /**
-   * Used to set translation sources for lazy-loading. If an existing locale (key) has been loaded previously
-   * and is configured here again, the translations for that locale will be reloaded.
+   * Used to set translation sources for lazy-loading. Can be called multiple times to add multiple sources.
    *
-   * Can be called multiple times to add multiple sources.
+   * If an existing locale (key) has been loaded previously and is configured here again, the translations
+   * for that locale will be reloaded.
    */
   setTranslationSourceMap(translationSourceMap: TranslationSourceMap) {
     const incomingLocales = Object.keys(translationSourceMap);
