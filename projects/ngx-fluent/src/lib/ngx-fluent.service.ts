@@ -11,25 +11,40 @@ import type { TranslationSourceConfig, TranslationSourceMap } from './types';
 export class NgxFluentService {
   private locale = new BehaviorSubject<string | null>(null);
 
+  /**
+   * Used to store unloaded source map entries since translations are lazy-loaded.
+   */
   private translationSourceMap: TranslationSourceMap = {};
-  private translationsMap = new Map<string, FluentBundle | null>();
+
+  /**
+   * Cache for loaded translations. If a translation is loaded, it should be removed from the source map.
+   */
+  private translationsMap: Record<string, FluentBundle> = {};
 
   localeChanges = this.locale.asObservable();
 
   constructor(private http: HttpClient) {}
 
+  /** This method should only be called after a bundle has been loaded. */
+  private clearTranslationSourceMapEntry(locale: string) {
+    delete this.translationSourceMap[locale];
+  }
+
   private fetchTranslation(locale: string) {
-    // If we already have the translation, return it.
-    const translationBundle = this.translationsMap.get(locale);
-    if (translationBundle) {
-      return of(translationBundle);
+    if (!(locale in this.translationSourceMap)) {
+      // Check if we have loaded the translation previously.
+      const translationBundle = this.translationsMap[locale];
+      if (translationBundle) {
+        return of(translationBundle);
+      }
     }
 
     // If we don't have the translation, try to fetch it.
     const source = this.translationSourceMap[locale] ?? '';
 
     if (source instanceof FluentBundle) {
-      this.translationsMap.set(locale, source);
+      this.translationsMap[locale] = source;
+      this.clearTranslationSourceMapEntry(locale);
       return of(source);
     }
 
@@ -52,7 +67,8 @@ export class NgxFluentService {
           console.error(errors);
         }
 
-        this.translationsMap.set(locale, bundle);
+        this.translationsMap[locale] = bundle;
+        this.clearTranslationSourceMapEntry(locale);
         return bundle;
       }),
       catchError((error) => {
@@ -74,11 +90,32 @@ export class NgxFluentService {
       });
   }
 
+  /**
+   * Used to set translation sources for lazy-loading. If an existing locale (key) has been loaded previously
+   * and is configured here again, the translations for that locale will be reloaded.
+   *
+   * Can be called multiple times to add multiple sources.
+   */
   setTranslationSourceMap(translationSourceMap: TranslationSourceMap) {
+    const incomingLocales = Object.keys(translationSourceMap);
+
+    // Remove old translation map value if a new source for the same key is passed
+    incomingLocales.forEach((locale) => this.clearTranslationSourceMapEntry(locale));
+
     this.translationSourceMap = {
       ...this.translationSourceMap,
       ...translationSourceMap,
     };
+
+    // Reload existing locales that have been loaded already
+    const loadedLocales = Object.keys(this.translationsMap);
+    const localesToReload = incomingLocales.filter((locale) => loadedLocales.includes(locale));
+
+    for (const locale of localesToReload) {
+      this.fetchTranslation(locale)
+        .pipe(catchError(() => of(null)))
+        .subscribe();
+    }
   }
 
   async translate(key: string, args?: any): Promise<string | null> {

@@ -69,6 +69,33 @@ describe('NgxFluentService', () => {
       const result = await fluentService.translate(unknownKey);
       expect(result).toBeNull();
     });
+
+    it('should remove locale key from source map after loading a locale', () => {
+      expect(Object.keys(fluentService['translationSourceMap'])).toEqual([commonLocale]);
+
+      fluentService.setLocale(commonLocale);
+
+      expect(Object.keys(fluentService['translationSourceMap'])).toEqual([]);
+    });
+
+    it('should reload the existing locale translations if setSourceTranslationMap receives a previously loaded locale', async () => {
+      httpSpy.get.and.returnValue(of(commonTranslation));
+      fluentService.setLocale(commonLocale);
+
+      expect(await fluentService.translate(commonKey)).toBe(commonValue);
+
+      const newValue = 'new-translation';
+
+      const bundle = new FluentBundle(commonLocale);
+      const resource = new FluentResource(`${commonKey} = ${newValue}`);
+      bundle.addResource(resource);
+
+      fluentService.setTranslationSourceMap({
+        [commonLocale]: bundle,
+      });
+
+      expect(await fluentService.translate(commonKey)).toBe(newValue);
+    });
   }
 
   describe('SetTranslationSourceMap option uses Record<string, string>', () => {
