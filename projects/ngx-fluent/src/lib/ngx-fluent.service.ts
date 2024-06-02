@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, catchError, of, lastValueFrom } from 'rxjs';
@@ -27,6 +29,7 @@ export class NgxFluentService {
 
   /** This method should only be called after a bundle has been loaded. */
   private clearTranslationSourceMapEntry(locale: string) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this.translationSourceMap[locale];
   }
 
