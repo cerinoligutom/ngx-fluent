@@ -12,6 +12,7 @@ Latest version available for each version of Angular
  | >= 1.1                | 14.x    | < 1.x          |
  | >= 1.2                | 15.x    | < 1.x          |
  | >= 2.0                | 16.x    | < 1.x          |
+ | >= 3.0                | 17.x    | < 1.x          |
 
 ## Installation
 
