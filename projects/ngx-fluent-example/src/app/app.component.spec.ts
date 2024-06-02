@@ -1,6 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { NgxFluentService, NgxFluentPipe } from '@zeferinix/ngx-fluent';
 
 import { AppComponent } from './app.component';

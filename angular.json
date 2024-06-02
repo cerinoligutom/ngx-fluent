@@ -55,12 +55,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/ngx-fluent-example",
+            "outputPath": {
+              "base": "dist/ngx-fluent-example"
+            },
             "index": "projects/ngx-fluent-example/src/index.html",
-            "main": "projects/ngx-fluent-example/src/main.ts",
-            "polyfills": "projects/ngx-fluent-example/src/polyfills.ts",
+            "polyfills": [
+              "projects/ngx-fluent-example/src/polyfills.ts"
+            ],
             "tsConfig": "projects/ngx-fluent-example/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -70,7 +73,8 @@
             "styles": [
               "projects/ngx-fluent-example/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "projects/ngx-fluent-example/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -95,9 +99,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true

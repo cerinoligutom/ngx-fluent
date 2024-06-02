@@ -50,7 +50,7 @@ describe('NgxFluentPipe', () => {
     httpSpy.get.and.returnValue(of(translations.en));
     fluentService.setLocale('en');
 
-    let name = 'John Doe';
+    const name = 'John Doe';
 
     let translatedMessage = pipe.transform(key, { name });
     tick(100);
@@ -63,7 +63,7 @@ describe('NgxFluentPipe', () => {
     httpSpy.get.and.returnValue(of(translations.en));
     fluentService.setLocale('en');
 
-    let name = 'John Doe';
+    const name = 'John Doe';
 
     let translatedMessage = pipe.transform(key, { name });
     tick(100);
