@@ -109,10 +109,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ngx-fluent-example:build:production"
+              "buildTarget": "ngx-fluent-example:build:production"
             },
             "development": {
-              "browserTarget": "ngx-fluent-example:build:development"
+              "buildTarget": "ngx-fluent-example:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -120,7 +120,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngx-fluent-example:build"
+            "buildTarget": "ngx-fluent-example:build"
           }
         },
         "test": {
