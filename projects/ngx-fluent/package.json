@@ -1,6 +1,6 @@
 {
   "name": "@zeferinix/ngx-fluent",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "An Angular library for Fluent",
   "author": {
     "email": "zeferinix@gmail.com",
@@ -9,8 +9,8 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "^16.0.0",
-    "@angular/core": "^16.0.0",
+    "@angular/common": "^17.0.0",
+    "@angular/core": "^17.0.0",
     "@fluent/bundle": "< 1.0.0"
   },
   "dependencies": {
